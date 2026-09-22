@@ -961,7 +961,7 @@ class AnalyticsService:
         ).filter(
             Shipment.created_at >= start_dt,
             Shipment.created_at <= end_dt,
-        ).group_by(func.coalesce(Shipment.carrier, "Unassigned")).all()
+        ).group_by(Shipment.carrier).all()
 
         carrier_breakdown = [
             CarrierMetric(

@@ -455,7 +455,14 @@ Incorrect:
 Frontend → PostgreSQL
 CMS      → PostgreSQL
 ```
+```
+admin user id and pass
+
+Email:    admin@myshop.com
+Password: Admin@2026Secure
+Name:     Store Administrator
 
 Keeping FastAPI as the single API/data-access layer keeps authentication, authorization, validation, business rules, inventory, orders, CMS changes, and database operations centralized.
-#   E - B a c k e n d  
+#   E - B a c k e n d 
+ 
  
