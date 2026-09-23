@@ -13,7 +13,7 @@ from app.models.cms import (
 from app.models.order import Banner
 from app.models.product import Product
 from app.models.category import Category, Brand
-from app.services.product_formatter import format_product_response
+from app.services.product_formatter import format_product_responsemain.py
 from app.schemas.cms import (
     HomepageSEO,
     PublicHomepageResponse,
