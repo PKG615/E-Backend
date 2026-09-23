@@ -5,7 +5,7 @@ from app.core.database import get_db
 
 from app.models.user import User
 
-from app.api.v1.endpoints.auth import get_current_user_optional
+from app.api.v1.endpoints.auth import get_current_user_optional, get_current_user
 
 from app.schemas.common import APIResponse
 
@@ -49,13 +49,13 @@ def get_cart(
 def add_item_to_cart(
     payload: CartItemAdd,
     x_session_id: Optional[str] = Header(None, alias="X-Session-Id"),
-    current_user: Optional[User] = Depends(get_current_user_optional),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Add a product/variant to the active cart with inventory validation.
     """
-    user_id = current_user.id if current_user else None
+    user_id = current_user.id
     cart = get_or_create_cart(db, user_id=user_id, session_id=x_session_id)
     updated_cart = add_cart_item(db, cart, payload)
 
@@ -70,13 +70,13 @@ def update_item_quantity(
     item_id: int,
     payload: CartItemUpdate,
     x_session_id: Optional[str] = Header(None, alias="X-Session-Id"),
-    current_user: Optional[User] = Depends(get_current_user_optional),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Update item quantity in cart with authoritative stock validation.
     """
-    user_id = current_user.id if current_user else None
+    user_id = current_user.id
     cart = get_or_create_cart(db, user_id=user_id, session_id=x_session_id)
     updated_cart = update_cart_item_quantity(db, cart, item_id, payload)
 
@@ -90,13 +90,13 @@ def update_item_quantity(
 def remove_item(
     item_id: int,
     x_session_id: Optional[str] = Header(None, alias="X-Session-Id"),
-    current_user: Optional[User] = Depends(get_current_user_optional),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Remove an item from the cart.
     """
-    user_id = current_user.id if current_user else None
+    user_id = current_user.id
     cart = get_or_create_cart(db, user_id=user_id, session_id=x_session_id)
     updated_cart = remove_cart_item(db, cart, item_id)
 
@@ -109,13 +109,13 @@ def remove_item(
 @router.delete("", response_model=APIResponse[CartResponse])
 def empty_cart(
     x_session_id: Optional[str] = Header(None, alias="X-Session-Id"),
-    current_user: Optional[User] = Depends(get_current_user_optional),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
     Clear all items from the active cart.
     """
-    user_id = current_user.id if current_user else None
+    user_id = current_user.id
     cart = get_or_create_cart(db, user_id=user_id, session_id=x_session_id)
     updated_cart = clear_cart(db, cart)
 

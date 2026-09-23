@@ -26,7 +26,7 @@ from app.schemas.product import (
     ProductVariantReorderRequest
 )
 from app.schemas.common import APIResponse, PaginatedData
-from app.api.v1.endpoints.products import format_product_response
+from app.services.product_formatter import format_product_response
 from app.services.image_service import (
     get_product_images,
     add_product_image,

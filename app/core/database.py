@@ -1,4 +1,6 @@
+import os
 from sqlalchemy import create_engine
+from sqlalchemy.pool import NullPool
 from sqlalchemy.orm import sessionmaker, declarative_base
 from app.core.config import settings
 
@@ -12,13 +14,17 @@ engine_kwargs = {
 }
 
 if not is_sqlite:
-    # Production PostgreSQL connection pool tuning
-    engine_kwargs.update({
-        "pool_size": 15,
-        "max_overflow": 25,
-        "pool_recycle": 1800,
-        "pool_timeout": 30
-    })
+    # Vercel runs the app as serverless functions. Avoid a large persistent
+    # SQLAlchemy pool per function instance, which can exhaust hosted DB limits.
+    if os.getenv("VERCEL"):
+        engine_kwargs["poolclass"] = NullPool
+    else:
+        engine_kwargs.update({
+            "pool_size": 15,
+            "max_overflow": 25,
+            "pool_recycle": 1800,
+            "pool_timeout": 30
+        })
 
 engine = create_engine(settings.DATABASE_URL, **engine_kwargs)
 

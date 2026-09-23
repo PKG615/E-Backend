@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
 
     DATABASE_URL: str = os.getenv("DATABASE_URL", "")
+    FRONTEND_URL: str = ""
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://127.0.0.1:5173",
         "http://localhost:5173",

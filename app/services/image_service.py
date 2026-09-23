@@ -13,7 +13,11 @@ from app.schemas.product import (
 )
 
 # Upload configuration
-UPLOAD_DIR = os.path.join(os.getcwd(), "uploads", "products")
+UPLOAD_ROOT = os.getenv(
+    "UPLOAD_DIR",
+    "/tmp/uploads" if os.getenv("VERCEL") else os.path.join(os.getcwd(), "uploads"),
+)
+UPLOAD_DIR = os.path.join(UPLOAD_ROOT, "products")
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
@@ -343,7 +347,10 @@ def delete_product_image(product_id: int, image_id: int, db: Session) -> bool:
     was_primary = image.is_primary
     file_path_to_clean = None
     if image.image_url.startswith("/uploads/products/"):
-        file_path_to_clean = os.path.join(os.getcwd(), image.image_url.lstrip("/"))
+        file_path_to_clean = os.path.join(
+            UPLOAD_ROOT,
+            image.image_url.replace("/uploads/", "", 1).lstrip("/"),
+        )
 
     db.delete(image)
     db.flush()

@@ -1,0 +1,14 @@
+# Local/secrets
+.env
+.venv/
+.git/
+ecommerce.db
+
+# Python cache/test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+
+# Local uploaded files
+uploads/

@@ -25,10 +25,15 @@ app = FastAPI(
     redoc_url=f"{settings.API_V1_STR}/redoc",
 )
 
-# Ensure uploads directory exists and mount static serving
-uploads_dir = os.path.join(os.getcwd(), "uploads")
-os.makedirs(os.path.join(uploads_dir, "products"), exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
+# Uploads:
+# - Local development: ./uploads
+# - Vercel: /tmp/uploads (ephemeral; use object storage for persistent media)
+UPLOAD_ROOT = os.getenv(
+    "UPLOAD_DIR",
+    "/tmp/uploads" if os.getenv("VERCEL") else os.path.join(os.getcwd(), "uploads"),
+)
+os.makedirs(os.path.join(UPLOAD_ROOT, "products"), exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=UPLOAD_ROOT), name="uploads")
 
 # 1. Security Headers Middleware
 @app.middleware("http")
@@ -69,9 +74,18 @@ async def auth_rate_limiter(request: Request, call_next):
     return await call_next(request)
 
 # CORS Setup
+# Keep local development origins and optionally add the deployed frontend URL
+# through the FRONTEND_URL environment variable. Do not use wildcard origins
+# with credentials.
+cors_origins = list(settings.BACKEND_CORS_ORIGINS)
+if settings.FRONTEND_URL:
+    frontend_url = settings.FRONTEND_URL.rstrip("/")
+    if frontend_url and frontend_url not in cors_origins:
+        cors_origins.append(frontend_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

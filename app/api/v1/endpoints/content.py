@@ -14,7 +14,7 @@ from app.schemas.category import CategoryResponse, CategorySummary
 
 from app.schemas.common import APIResponse
 
-from app.api.v1.endpoints.products import format_product_response
+from app.services.product_formatter import format_product_response
 
 router = APIRouter()
 

@@ -11,9 +11,11 @@ from app.models.wishlist import WishlistItem, CompareItem
 
 from app.api.v1.endpoints.auth import get_current_user, get_current_user_optional
 
-from app.api.v1.endpoints.products import format_product_response
+from app.services.product_formatter import format_product_response
 
-from app.schemas.common import APIResponse
+from app.schemas.common import APIResponse, PaginatedData
+from app.services.review_service import ReviewService
+from app.schemas.reviews import ReviewUpdate
 
 from app.schemas.wishlist import(
     WishlistAddRequest,
@@ -391,3 +393,18 @@ def clear_compare_list(
         message="Compare list cleared",
         data={"cleared_count": deleted}
     )
+
+
+# CUSTOMER REVIEWS
+@router.get("/reviews")
+def get_my_reviews(page: int = 1, limit: int = 20, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    items, total = ReviewService.get_user_reviews(db, current_user.id, page, limit)
+    return APIResponse(success=True, data={"items": items, "total": total, "page": page, "limit": limit, "total_pages": max(1, (total + limit - 1) // limit)})
+
+@router.put("/reviews/{review_id}")
+def update_my_review(review_id: int, data: ReviewUpdate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return APIResponse(success=True, data=ReviewService.update_review(db, current_user, review_id, data))
+
+@router.delete("/reviews/{review_id}")
+def delete_my_review(review_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return APIResponse(success=True, data=ReviewService.delete_review(db, current_user, review_id))

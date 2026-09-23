@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.api.v1.endpoints import (
-    auth, categories, brands, products, content, home, me, cart, addresses, checkout,
-    orders, admin_orders, admin_shipments, customer_returns, admin_returns, reviews,
+    auth, categories, brands, content, home, me, cart, addresses, checkout,
+    orders, admin_orders, admin_shipments, customer_returns, admin_returns,
     account, admin_support, admin_customers, admin_promotions, admin_search, collections
 )
 from app.api.v1.endpoints.admin import dashboard as admin_dashboard
@@ -15,6 +15,7 @@ from app.api.v1.endpoints.admin import homepage as admin_homepage
 from app.api.v1.endpoints.admin import collections as admin_collections
 from app.api.v1.endpoints.admin import reviews as admin_reviews
 from app.api.v1.endpoints.admin import analytics as admin_analytics
+from app.api.v1.endpoints import public_products
 
 api_router = APIRouter()
 
@@ -26,7 +27,7 @@ api_router.include_router(home.router, prefix="/newsletter", tags=["Newsletter"]
 api_router.include_router(collections.router, prefix="/collections", tags=["Customer Collections"])
 api_router.include_router(categories.router, prefix="/categories", tags=["Categories"])
 api_router.include_router(brands.router, prefix="/brands", tags=["Brands"])
-api_router.include_router(products.router, prefix="/products", tags=["Products"])
+api_router.include_router(public_products.router, prefix="/products", tags=["Products"])
 api_router.include_router(content.router, prefix="/content", tags=["Content & CMS"])
 api_router.include_router(me.router, prefix="/me", tags=["Customer Wishlist & Compare"])
 api_router.include_router(cart.router, prefix="/me/cart", tags=["Customer Cart"])
@@ -34,7 +35,6 @@ api_router.include_router(addresses.router, prefix="/me/addresses", tags=["Custo
 api_router.include_router(checkout.router, prefix="/me/checkout", tags=["Customer Checkout"])
 api_router.include_router(orders.router, prefix="/me/orders", tags=["Customer Orders"])
 api_router.include_router(customer_returns.router, prefix="/me/returns", tags=["Customer Returns"])
-api_router.include_router(reviews.router, tags=["Customer Reviews & Q&A"])
 api_router.include_router(account.router, prefix="/me", tags=["Customer Account & Profile & Notifications & Support"])
 
 # Admin Control Endpoints
@@ -59,4 +59,5 @@ api_router.include_router(admin_customers.router, prefix="/admin/customers", tag
 api_router.include_router(admin_promotions.router, prefix="/admin/promotions", tags=["Admin Marketing & Promotions"])
 api_router.include_router(admin_search.router, prefix="/admin/search", tags=["Admin Global Search"])
 api_router.include_router(admin_analytics.router, prefix="/admin/analytics", tags=["Admin Analytics & Reports"])
+
 
