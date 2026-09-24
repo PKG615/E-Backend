@@ -1,4 +1,5 @@
 from typing import List
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -7,15 +8,25 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
 
     SECRET_KEY: str
+
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     ALGORITHM: str = "HS256"
 
     DATABASE_URL: str
 
-    FRONTEND_URL: str = ""
+    # Public storefront URL
+    FRONTEND_URL: str = "https://e-public-puce.vercel.app"
 
+    # Allowed frontend applications
     BACKEND_CORS_ORIGINS: List[str] = [
+        # Production
+        "https://e-public-puce.vercel.app",
+        "https://e-cms-one.vercel.app",
+
+        # Local development
+        "http://127.0.0.1:3000",
+        "http://localhost:3000",
         "http://127.0.0.1:5173",
         "http://localhost:5173",
         "http://127.0.0.1:5174",

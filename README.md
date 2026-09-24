@@ -466,3 +466,47 @@ Keeping FastAPI as the single API/data-access layer keeps authentication, author
 #   E - B a c k e n d 
  
  
+
+```
+
+### Ab kya karna hai
+
+Backend mein purane `main.py` ko is code se replace karo.
+
+Phir locally test:
+
+```powershell
+python -m uvicorn app.main:app --reload
+```
+
+Backend health:
+
+```text
+http://127.0.0.1:8000/health
+```
+
+Uske baad backend ko Vercel par **redeploy** karo.
+
+Redeploy ke baad CMS se:
+
+```text
+OPTIONS /api/v1/auth/login
+```
+
+ka status ideally:
+
+```text
+200 OK
+```
+
+hona chahiye.
+
+Uske baad actual:
+
+```text
+POST /api/v1/auth/login
+```
+
+request jayegi.
+
+**Important:** Agar `OPTIONS` phir bhi `400` deta hai, next mujhe `app/core/config.py` bhejna hoga, kyunki usmein `BACKEND_CORS_ORIGINS` aur `FRONTEND_URL` ki settings bhi inspect karni hongi.app/core/config.py
