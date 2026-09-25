@@ -65,39 +65,26 @@ app.mount(
     name="uploads",
 )
 
-
 # ============================================================
 # CORS Configuration
 # ============================================================
 
-# Start with configured origins from settings.
 cors_origins = list(settings.BACKEND_CORS_ORIGINS or [])
 
-
-# Add configured FRONTEND_URL if available.
 if settings.FRONTEND_URL:
     frontend_url = settings.FRONTEND_URL.strip().rstrip("/")
-
-    if frontend_url and frontend_url not in cors_origins:
+    if frontend_url:
         cors_origins.append(frontend_url)
 
 
-# Production frontend applications.
-# These are explicitly added so both the CMS and storefront
-# can communicate with the same backend.
+# Production applications
 production_origins = [
     "https://e-cms-one.vercel.app",
     "https://e-hba356dt8-pkg615s-projects.vercel.app",
     "https://e-public-puce.vercel.app",
 ]
 
-
-for origin in production_origins:
-    if origin not in cors_origins:
-        cors_origins.append(origin)
-
-
-# Local development origins.
+# Local development
 local_origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -107,13 +94,10 @@ local_origins = [
     "http://127.0.0.1:5174",
 ]
 
+cors_origins.extend(production_origins)
+cors_origins.extend(local_origins)
 
-for origin in local_origins:
-    if origin not in cors_origins:
-        cors_origins.append(origin)
-
-
-# Remove empty values and duplicate origins.
+# Clean + remove duplicates
 cors_origins = list(
     dict.fromkeys(
         origin.strip().rstrip("/")
@@ -122,22 +106,18 @@ cors_origins = list(
     )
 )
 
-
-logger.info(
-    "Configured CORS origins: %s",
-    cors_origins,
-)
+logger.info("Configured CORS origins: %s", cors_origins)
 
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
+    allow_origin_regex=r"^https://.*\.vercel\.app$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
 )
-
 
 # ============================================================
 # Security Headers Middleware
