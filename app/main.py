@@ -87,6 +87,7 @@ if settings.FRONTEND_URL:
 # can communicate with the same backend.
 production_origins = [
     "https://e-cms-one.vercel.app",
+    "https://e-hba356dt8-pkg615s-projects.vercel.app",
     "https://e-public-puce.vercel.app",
 ]
 
